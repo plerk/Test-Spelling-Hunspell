@@ -11,8 +11,9 @@ my $post_diag;
 
 $modules{$_} = $_ for qw(
   ExtUtils::MakeMaker
-  File::ShareDir::Install
+  Module::Load
   Test::More
+  Test::Stream
 );
 
 
