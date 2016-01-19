@@ -10,7 +10,7 @@ my %modules;
 my $post_diag;
 
 $modules{$_} = $_ for qw(
-  ExtUtils::MakeMaker
+  Module::Build
   Module::Load
   Test::More
   Test::Stream
