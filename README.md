@@ -1,6 +1,6 @@
 # Test::Spelling::Hunspell [![Build Status](https://secure.travis-ci.org/plicease/Test-Spelling-Hunspell.png)](http://travis-ci.org/plicease/Test-Spelling-Hunspell)
 
-Check for spelling errors in POD files using hunspell
+Check for spelling errors in POD files using Hunspell
 
 # SYNOPSIS
 

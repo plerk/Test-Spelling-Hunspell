@@ -12,7 +12,7 @@ no Test::Stream::Exporter;
 use Module::Load qw( load );
 use Carp qw( croak );
 
-# ABSTRACT: Check for spelling errors in POD files using hunspell
+# ABSTRACT: Check for spelling errors in POD files using Hunspell
 # VERSION
 
 =head1 SYNOPSIS
