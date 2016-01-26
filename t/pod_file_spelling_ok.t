@@ -3,7 +3,7 @@ use warnings;
 use Test::Stream qw( -V1 -Tester Subtest );
 use Test::Spelling::Hunspell;
 use 5.020;
-use experimental qw( signatures  );
+use experimental qw( signatures postderef );
 
 plan 7;
 
