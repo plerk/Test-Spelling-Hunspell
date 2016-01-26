@@ -8,7 +8,7 @@ plan 1;
 eval { set_pod_parser('My::Pod::Parser') };
 diag $@ if $@;
 
-my $parser = eval { get_pod_parser() };
+my $parser = eval { Test::Spelling::Hunspell::_get_pod_parser() };
 diag $@ if $@;
 
 is ref($parser), 'My::Pod::Parser', 'got the right pod parser';

@@ -2,6 +2,20 @@
 
 Check for spelling errors in POD files using hunspell
 
+# SYNOPSIS
+
+    use Test::Stream -V1;
+    use Test::Spelling::Hunspell;
+    use Alien::Hunspell::EN::US;
+    
+    plan 1;
+    set_language_files(
+      Alien::Hunspell::EN::US->aff_file,
+      Alien::Hunspell::EN::US->dic_file,
+    );
+    
+    pod_file_spelling_ok 'lib/Foo/Bar.pm';
+
 # DESCRIPTION
 
 Test POD Files for spelling errors using Hunspell (either via
@@ -23,23 +37,28 @@ and wants a test that is a little more consistent.
 
 ## pod\_file\_spelling\_ok
 
-TODO
+    pod_file_spelling_ok $pod_filename;
+    pod_file_spelling_ok $pod_filename, $test_name;
+
+Passes if the given POD file has no spelling errors.
 
 ## set\_language\_files
 
-TODO
+    set_language_files $aff_file, @dic_files;
 
-## get\_hunspell
+Sets the affix and "dictionary" word list files.  This can be obtained 
+using [Alien::Hunspell::EN::US](https://metacpan.org/pod/Alien::Hunspell::EN::US), [Alien::Hunspell::EN::AU](https://metacpan.org/pod/Alien::Hunspell::EN::AU), or perhaps 
+from your operating system.
 
-TODO
+You must specify exactly one affix file and at least one dictionary 
+files.
 
 ## set\_pod\_parser
 
-TODO
+    set_pod_parser $parser_class;
 
-## get\_pod\_parser
-
-TODO
+Set the parser used to extract words from POD.  This is [Pod::Spell](https://metacpan.org/pod/Pod::Spell) by 
+default.
 
 # SEE ALSO
 

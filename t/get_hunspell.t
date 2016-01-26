@@ -7,7 +7,7 @@ plan 1;
 
 set_language_files 'corpus/test.aff', 'corpus/test.dic';
 
-my $spell = eval { get_hunspell() };
+my $spell = eval { Test::Spelling::Hunspell::_get_hunspell() };
 diag $@ if $@;
 
 like ref($spell), qr{^Text::Hunspell(|::FFI)$}, 'got a speller';

@@ -7,13 +7,27 @@ use 5.020;
 use experimental qw( signatures postderef );
 use Test::Stream::Context qw( context );
 use Test::Stream::Exporter;
-default_exports qw( set_pod_parser get_pod_parser get_hunspell set_language_files pod_file_spelling_ok );
+default_exports qw( set_pod_parser set_language_files pod_file_spelling_ok );
 no Test::Stream::Exporter;
 use Module::Load qw( load );
 use Carp qw( croak );
 
 # ABSTRACT: Check for spelling errors in POD files using hunspell
 # VERSION
+
+=head1 SYNOPSIS
+
+ use Test::Stream -V1;
+ use Test::Spelling::Hunspell;
+ use Alien::Hunspell::EN::US;
+ 
+ plan 1;
+ set_language_files(
+   Alien::Hunspell::EN::US->aff_file,
+   Alien::Hunspell::EN::US->dic_file,
+ );
+ 
+ pod_file_spelling_ok 'lib/Foo/Bar.pm';
 
 =head1 DESCRIPTION
 
@@ -36,7 +50,10 @@ and wants a test that is a little more consistent.
 
 =head2 pod_file_spelling_ok
 
-TODO
+ pod_file_spelling_ok $pod_filename;
+ pod_file_spelling_ok $pod_filename, $test_name;
+
+Passes if the given POD file has no spelling errors.
 
 =cut
 
@@ -57,13 +74,13 @@ sub pod_file_spelling_ok ($file, $name = "POD spelling for $file")
     binmode $outfh, ':utf8';
     open my $infh, '<', $file;
     binmode $infh, ':utf8';
-    get_pod_parser()->parse_from_filehandle($infh, $outfh);
+    _get_pod_parser()->parse_from_filehandle($infh, $outfh);
     close $infh;
     close $outfh;
     my %count;
     my @words = grep { !$count{$_}++ } grep !/^\s*$/, split /\s+/, $document;
 
-    my $speller = get_hunspell();
+    my $speller = _get_hunspell();
     
     foreach my $word (@words)
     {
@@ -84,7 +101,14 @@ sub pod_file_spelling_ok ($file, $name = "POD spelling for $file")
 
 =head2 set_language_files
 
-TODO
+ set_language_files $aff_file, @dic_files;
+
+Sets the affix and "dictionary" word list files.  This can be obtained 
+using L<Alien::Hunspell::EN::US>, L<Alien::Hunspell::EN::AU>, or perhaps 
+from your operating system.
+
+You must specify exactly one affix file and at least one dictionary 
+files.
 
 =cut
 
@@ -100,13 +124,7 @@ sub set_language_files ($aff, $dic, @rest)
 }
 
 
-=head2 get_hunspell
-
-TODO
-
-=cut
-
-sub get_hunspell ()
+sub _get_hunspell ()
 {
   croak "must specify affic and dictionary files with set_language_files"
     unless @lang >= 2;
@@ -126,7 +144,10 @@ sub get_hunspell ()
 
 =head2 set_pod_parser
 
-TODO
+ set_pod_parser $parser_class;
+
+Set the parser used to extract words from POD.  This is L<Pod::Spell> by 
+default.
 
 =cut
 
@@ -137,13 +158,7 @@ sub set_pod_parser ($class)
   $parser_class = $class;
 }
 
-=head2 get_pod_parser
-
-TODO
-
-=cut
-
-sub get_pod_parser ()
+sub _get_pod_parser ()
 {
   load $parser_class unless $parser_class->can('new');
   $parser_class->new;
