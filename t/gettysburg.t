@@ -1,13 +1,11 @@
 use strict;
 use warnings;
-use Test::Stream -V1;
+use Test::Stream -V1, SkipWithout => ['Alien::Hunspell::EN::US'];
 use Test::Spelling::Hunspell;
-
-skip_all 'test requires english dictionary'
-  unless -r "/usr/share/hunspell/en_US.aff"
-  &&     -r "/usr/share/hunspell/en_US.dic";
+use Alien::Hunspell::EN::US;
 
 plan 1;
 
-set_language_files "/usr/share/hunspell/en_US.aff", "/usr/share/hunspell/en_US.dic";
+my $class = 'Alien::Hunspell::EN::US';
+set_language_files( $class->aff_file, $class->dic_file );
 pod_file_spelling_ok "corpus/gettysburg.pod";
