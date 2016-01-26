@@ -12,6 +12,7 @@ my $post_diag;
 $modules{$_} = $_ for qw(
   Module::Build
   Module::Load
+  Path::Class
   Test::More
   Test::Stream
   Text::Hunspell

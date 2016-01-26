@@ -11,6 +11,7 @@ default_exports qw( set_pod_parser set_language_files pod_file_spelling_ok );
 no Test::Stream::Exporter;
 use Module::Load qw( load );
 use Carp qw( croak );
+use Path::Class ();
 
 # ABSTRACT: Check for spelling errors in POD files using Hunspell
 # VERSION
@@ -164,6 +165,28 @@ sub _get_pod_parser ()
   $parser_class->new;
 }
 
+sub _all_pod_files (@try)
+{
+  @try ? do {
+    my @all = grep !/^(CVS|\.svn|\.git)$/, @try;
+    my @files = grep { -f $_ && _is_perl($_) } @all;
+    my @dirs = _all_pod_files(map { $_->stringify } 
+               map { Path::Class::Dir->new($_)->children } 
+               grep { -d $_ } @all);
+    sort(@files, @dirs);
+  } : ();
+}
+
+sub _is_perl ($file)
+{
+  $file =~ /\.(PL|pl|plx|pm|pod|t)$/ ? 1 
+  : !-f $file ? 0 : do { 
+    open my $fh, '<', $file;
+    my $line = <$fh>;
+    close $fh;
+    defined $line && $line =~ /^#!.*perl/;
+  } ? 1 : ();
+}
 
 =head1 SEE ALSO
 
