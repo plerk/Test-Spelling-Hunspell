@@ -8,7 +8,7 @@ use Module::Load qw( load );
 sub new
 {
   my($class, %args) = @_;
-  $args{eval { load('Text::Hunspell'); 1 } ? 'Text::Hunspell' : 'Text::Hunspell::FFI'} = 0;
+  delete $args{requires}->{eval { load('Text::Hunspell'); 1 } ? 'Text::Hunspell::FFI' : 'Text::Hunspell'};
   my $self = $class->SUPER::new(%args);
   $self;
 }

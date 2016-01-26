@@ -14,6 +14,8 @@ $modules{$_} = $_ for qw(
   Module::Load
   Test::More
   Test::Stream
+  Text::Hunspell
+  Text::Hunspell::FFI
 );
 
 
