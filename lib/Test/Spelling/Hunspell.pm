@@ -53,18 +53,23 @@ sub pod_file_spelling_ok ($file, $name = "POD spelling for $file")
   else
   {
     my $document = '';
-    open my $fh, '>', \$document;
-    get_pod_parser()->parse_from_file($file, $fh);
+    open my $outfh, '>', \$document;
+    binmode $outfh, ':utf8';
+    open my $infh, '<', $file;
+    binmode $infh, ':utf8';
+    get_pod_parser()->parse_from_filehandle($infh, $outfh);
+    close $infh;
+    close $outfh;
     my %count;
-    my @words = grep { !$count{$_}++ } grep !/^$/, split /(\s)+/, $document;
-    
+    my @words = grep { !$count{$_}++ } grep !/^\s*$/, split /\s+/, $document;
+
     my $speller = get_hunspell();
     
     foreach my $word (@words)
     {
       next if $speller->check($word);
       $ok = 0;
-      push @diag, "  mispelled: $word" . ($count{$word} > 1 ? " [ x $count{$word} ]" : '');;
+      push @diag, "  mispelled: '$word'" . ($count{$word} > 1 ? " [ x $count{$word} ]" : '');;
       push @diag, "    suggestion: $_" for $speller->suggest($word);
     }
   }
