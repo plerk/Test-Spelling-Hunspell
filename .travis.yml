@@ -1,6 +1,11 @@
 language: perl
 sudo: false
 
+addons:
+  apt:
+    packages:
+      - libhunspell-dev
+
 install:
   - perlbrew list
   - dzil authordeps --missing | cpanm -n
