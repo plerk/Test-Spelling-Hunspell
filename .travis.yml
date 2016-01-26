@@ -4,8 +4,8 @@ sudo: false
 install:
   - perlbrew list
   - dzil authordeps --missing | cpanm -n
-  - dzil listdeps   --missing | cpanm -n
-  - cpanm -v Text::Hunspell::FFI
+  - dzil listdeps   --missing | grep -v Text::Hunspell | cpanm -n
+  - cpanm -v $TEXT_HUNSPELL
 
 perl:
   - "5.20"
@@ -13,3 +13,7 @@ perl:
 
 script:
   - dzil test -v
+
+env:
+  - TEXT_HUNSPELL=Text::Hunspell::FFI
+  - TEXT_HUNSPELL=Text::Hunspell
