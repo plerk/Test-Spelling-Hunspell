@@ -1,20 +1,20 @@
-package Test::Spelling::Hunspell;
-
 use strict;
 use warnings;
 use utf8;
 use 5.020;
 use experimental qw( signatures postderef );
-use Test::Stream::Context qw( context );
-use Test::Stream::Exporter;
-default_exports qw( set_pod_parser set_language_files pod_file_spelling_ok );
-no Test::Stream::Exporter;
-use Module::Load qw( load );
-use Carp qw( croak );
 use Path::Class ();
 
-# ABSTRACT: Check for spelling errors in POD files using Hunspell
-# VERSION
+package Test::Spelling::Hunspell {
+
+  use Test::Stream::Context qw( context );
+  use Test::Stream::Exporter;
+  default_exports qw( set_pod_parser set_language_files pod_file_spelling_ok );
+  no Test::Stream::Exporter;
+  use Module::Load qw( load );
+  use Carp qw( croak );
+
+  # ABSTRACT: Check for spelling errors in POD files using Hunspell
 
 =head1 SYNOPSIS
 
@@ -58,47 +58,47 @@ Passes if the given POD file has no spelling errors.
 
 =cut
 
-sub pod_file_spelling_ok ($file, $name = "POD spelling for $file")
-{
-  my $ok = 1;
-
-  my @diag;
-  if(!-r $file)
+  sub pod_file_spelling_ok ($file, $name = "POD spelling for $file")
   {
-    $ok = 0;
-    push @diag, "$file does not exist or is unreadable";
-  }
-  else
-  {
-    my $document = '';
-    open my $outfh, '>', \$document;
-    binmode $outfh, ':utf8';
-    open my $infh, '<', $file;
-    binmode $infh, ':utf8';
-    _get_pod_parser()->parse_from_filehandle($infh, $outfh);
-    close $infh;
-    close $outfh;
-    my %count;
-    my @words = grep { !$count{$_}++ } grep !/^\s*$/, split /\s+/, $document;
+    my $ok = 1;
 
-    my $speller = _get_hunspell();
-    
-    foreach my $word (@words)
+    my @diag;
+    if(!-r $file)
     {
-      next if $speller->check($word);
       $ok = 0;
-      push @diag, "  mispelled: '$word'" . ($count{$word} > 1 ? " [ x $count{$word} ]" : '');;
-      push @diag, "    suggestion: $_" for $speller->suggest($word);
+      push @diag, "$file does not exist or is unreadable";
     }
-  }
+    else
+    {
+      my $document = '';
+      open my $outfh, '>', \$document;
+      binmode $outfh, ':utf8';
+      open my $infh, '<', $file;
+      binmode $infh, ':utf8';
+      _get_pod_parser()->parse_from_filehandle($infh, $outfh);
+      close $infh;
+      close $outfh;
+      my %count;
+      my @words = grep { !$count{$_}++ } grep !/^\s*$/, split /\s+/, $document;
 
-  my $context = context();
-  $context->ok($ok, $name);
-  $context->diag($_) for @diag;
-  $context->release;
+      my $speller = _get_hunspell();
+    
+      foreach my $word (@words)
+      {
+        next if $speller->check($word);
+        $ok = 0;
+        push @diag, "  mispelled: '$word'" . ($count{$word} > 1 ? " [ x $count{$word} ]" : '');;
+        push @diag, "    suggestion: $_" for $speller->suggest($word);
+      }
+    }
+
+    my $context = context();
+    $context->ok($ok, $name);
+    $context->diag($_) for @diag;
+    $context->release;
   
-  $ok;
-}
+    $ok;
+  }
 
 =head2 set_language_files
 
@@ -113,35 +113,35 @@ files.
 
 =cut
 
-# first entry is the affix file,
-# the second is the main dictionary
-# subsequent entires are additional
-# dictionaries.
-my @lang;
+  # first entry is the affix file,
+  # the second is the main dictionary
+  # subsequent entires are additional
+  # dictionaries.
+  my @lang;
 
-sub set_language_files ($aff, $dic, @rest)
-{
-  @lang = ($aff, $dic, @rest);
-}
-
-
-sub _get_hunspell ()
-{
-  croak "must specify affic and dictionary files with set_language_files"
-    unless @lang >= 2;
-  foreach my $try (qw( Text::Hunspell::FFI Text::Hunspell ))
+  sub set_language_files ($aff, $dic, @rest)
   {
-    if($try->can('new') || eval { load $try; 1 })
-    {
-      my($aff, $dic, @rest) = @lang;
-      my $spell = $try->new($aff, $dic);
-      $spell->add_dic($_) for @rest;
-      return $spell;
-    }
+    @lang = ($aff, $dic, @rest);
   }
+
+
+  sub _get_hunspell ()
+  {
+    croak "must specify affic and dictionary files with set_language_files"
+      unless @lang >= 2;
+    foreach my $try (qw( Text::Hunspell::FFI Text::Hunspell ))
+    {
+      if($try->can('new') || eval { load $try; 1 })
+      {
+        my($aff, $dic, @rest) = @lang;
+        my $spell = $try->new($aff, $dic);
+        $spell->add_dic($_) for @rest;
+        return $spell;
+      }
+    }
   
-  die "No appropriate speller installed.  Please install Text::Hunspell::FFI or Text::Hunspell";
-}
+    die "No appropriate speller installed.  Please install Text::Hunspell::FFI or Text::Hunspell";
+  }
 
 =head2 set_pod_parser
 
@@ -152,40 +152,41 @@ default.
 
 =cut
 
-my $parser_class = 'Pod::Spell';
+  my $parser_class = 'Pod::Spell';
 
-sub set_pod_parser ($class)
-{
-  $parser_class = $class;
-}
+  sub set_pod_parser ($class)
+  {
+    $parser_class = $class;
+  }
 
-sub _get_pod_parser ()
-{
-  load $parser_class unless $parser_class->can('new');
-  $parser_class->new;
-}
+  sub _get_pod_parser ()
+  {
+    load $parser_class unless $parser_class->can('new');
+    $parser_class->new;
+  }
 
-sub _all_pod_files (@try)
-{
-  @try ? do {
-    my @all = grep !/^(CVS|\.svn|\.git)$/, @try;
-    my @files = grep { -f $_ && _is_perl($_) } @all;
-    my @dirs = _all_pod_files(map { $_->stringify } 
-               map { Path::Class::Dir->new($_)->children } 
-               grep { -d $_ } @all);
-    sort(@files, @dirs);
-  } : ();
-}
+  sub _all_pod_files (@try)
+  {
+    @try ? do {
+      my @all = grep !/^(CVS|\.svn|\.git)$/, @try;
+      my @files = grep { -f $_ && _is_perl($_) } @all;
+      my @dirs = _all_pod_files(map { $_->stringify } 
+                 map { Path::Class::Dir->new($_)->children } 
+                 grep { -d $_ } @all);
+      sort(@files, @dirs);
+    } : ();
+  }
 
-sub _is_perl ($file)
-{
-  $file =~ /\.(PL|pl|plx|pm|pod|t)$/ ? 1 
-  : !-f $file ? 0 : do { 
-    open my $fh, '<', $file;
-    my $line = <$fh>;
-    close $fh;
-    defined $line && $line =~ /^#!.*perl/;
-  } ? 1 : ();
+  sub _is_perl ($file)
+  {
+    $file =~ /\.(PL|pl|plx|pm|pod|t)$/ ? 1 
+    : !-f $file ? 0 : do { 
+      open my $fh, '<', $file;
+      my $line = <$fh>;
+      close $fh;
+      defined $line && $line =~ /^#!.*perl/;
+    } ? 1 : ();
+  }
 }
 
 =head1 SEE ALSO
