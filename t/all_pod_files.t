@@ -1,5 +1,6 @@
 use strict;
 use warnings;
+use 5.020;
 use Test::Stream qw( -V1 -Tester );
 use Test::Spelling::Hunspell;
 use File::Basename qw( basename );

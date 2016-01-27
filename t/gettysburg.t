@@ -1,5 +1,6 @@
 use strict;
 use warnings;
+use 5.020;
 use Test::Stream -V1, SkipWithout => ['Alien::Hunspell::EN::US'];
 use Test::Spelling::Hunspell;
 use Alien::Hunspell::EN::US;
