@@ -13,6 +13,7 @@ $modules{$_} = $_ for qw(
   Module::Build
   Module::Load
   Path::Class
+  Pod::Simple
   Test::More
   Test::Stream
   Text::Hunspell

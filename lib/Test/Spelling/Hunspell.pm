@@ -189,6 +189,68 @@ default.
   }
 }
 
+package Test::Spelling::Hunspell::Parser {
+
+  use base qw( Pod::Simple );
+
+  __PACKAGE__->_accessorize(
+    qw( line_number in_verbatim words ),
+  );
+
+  sub new ($class)
+  {
+    my $self = $class->SUPER::new;
+    $self->preserve_whitespace(1);
+    $self->words({});
+    $self;
+  }
+
+  sub _handle_element_start ($self, $tagname, $attrhash, @)
+  {
+    $self->line_number($attrhash->{start_line}) if defined $attrhash->{start_line};
+    $self->in_verbatim($self->in_verbatim+1)    if $tagname eq 'Verbatim';
+    ();
+  }
+
+  sub _handle_element_end ($self, $tagname, @)
+  {
+    $self->in_verbatim($self->in_verbatim-1) if $tagname eq 'Verbatim';
+    ();
+  }
+
+  sub _print_words ($self, $line, @)
+  {
+    foreach my $word (split /\s+/, $line)
+    {
+      $word =~ s/^[\(\[\{\'\"\:\;\,\?\!\.]+//;
+      $word =~ s/^([^\)\]\}\"\;\,\?\!]+).*$/$1/;
+      $word =~ s/[\.\'\:]+$//;
+      next unless $word =~ /\w/;
+      push @{ $self->words->{$word} }, $self->line_number;
+    }
+  }
+
+  sub _handle_text ($self, $text)
+  {
+    return if $self->in_verbatim;
+    if($text =~ /^[A-Z\s]+$/)
+    {
+      $text = lc $text;
+    }
+    $text =~ s{([A-Za-z_0-9]+::)+[A-Za-z_0-9]+}{}g;
+    
+    while($text =~ /^(.*?)\n(.*)$/)
+    {
+      $self->_print_words($1);
+      $self->line_number($self->line_number+1);
+      $text = $2;
+    }
+
+    $self->_print_words($text);
+    ();
+  }
+}
+
 =head1 SEE ALSO
 
 =over 4
