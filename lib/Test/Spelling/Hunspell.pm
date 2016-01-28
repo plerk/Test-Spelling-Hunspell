@@ -218,7 +218,7 @@ package Test::Spelling::Hunspell::Parser {
     ();
   }
 
-  sub _print_words ($self, $line, @)
+  sub _add_words ($self, $line, @)
   {
     foreach my $word (split /\s+/, $line)
     {
@@ -241,12 +241,12 @@ package Test::Spelling::Hunspell::Parser {
     
     while($text =~ /^(.*?)\n(.*)$/)
     {
-      $self->_print_words($1);
+      $self->_add_words($1);
       $self->line_number($self->line_number+1);
       $text = $2;
     }
 
-    $self->_print_words($text);
+    $self->_add_words($text);
     ();
   }
 }
