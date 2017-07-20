@@ -4,7 +4,7 @@ Check for spelling errors in POD files using Hunspell
 
 # SYNOPSIS
 
-    use Test::Stream -V1;
+    use Test::V0;
     use Test::Spelling::Hunspell;
     use Alien::Hunspell::EN::US;
     
@@ -69,7 +69,7 @@ default.
 
 # AUTHOR
 
-Graham Ollis &lt;plicease@cpan.org>
+Graham Ollis <plicease@cpan.org>
 
 # COPYRIGHT AND LICENSE
 

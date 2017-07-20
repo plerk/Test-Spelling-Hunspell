@@ -1,11 +1,7 @@
-use strict;
-use warnings;
 use 5.020;
-use Test::Stream qw( -V1 -Tester );
+use Test2::V0;
 use Test::Spelling::Hunspell;
 use File::Basename qw( basename );
-
-plan 2;
 
 ok('Test::Spelling::Hunspell'->can('_all_pod_files'), "can _all_pod_files");
 
@@ -23,3 +19,5 @@ is(
   [qw( binisperl Bar.pm foo.t )],
   'looks good'
 );
+
+done_testing;

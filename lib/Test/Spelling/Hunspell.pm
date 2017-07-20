@@ -7,18 +7,18 @@ use Path::Class ();
 
 package Test::Spelling::Hunspell {
 
-  use Test::Stream::Context qw( context );
-  use Test::Stream::Exporter;
-  default_exports qw( set_pod_parser set_language_files pod_file_spelling_ok );
-  no Test::Stream::Exporter;
+  use Test2::API qw( context );
   use Module::Load qw( load );
   use Carp qw( croak );
+  use base qw( Exporter );
+
+  our @EXPORT = qw( set_pod_parser set_language_files pod_file_spelling_ok );
 
   # ABSTRACT: Check for spelling errors in POD files using Hunspell
 
 =head1 SYNOPSIS
 
- use Test::Stream -V1;
+ use Test::V0;
  use Test::Spelling::Hunspell;
  use Alien::Hunspell::EN::US;
  
@@ -129,7 +129,7 @@ files.
   {
     croak "must specify affic and dictionary files with set_language_files"
       unless @lang >= 2;
-    foreach my $try (qw( Text::Hunspell::FFI Text::Hunspell ))
+    foreach my $try (qw( Text::Hunspell Text::Hunspell::FFI ))
     {
       if($try->can('new') || eval { load $try; 1 })
       {

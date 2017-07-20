@@ -1,10 +1,6 @@
-use strict;
-use warnings;
 use 5.020;
-use Test::Stream -V1;
+use Test2::V0;
 use Test::Spelling::Hunspell;
-
-plan 1;
 
 set_language_files 'corpus/test.aff', 'corpus/test.dic';
 
@@ -13,3 +9,4 @@ diag $@ if $@;
 
 like ref($spell), qr{^Text::Hunspell(|::FFI)$}, 'got a speller';
 
+done_testing;

@@ -1,10 +1,6 @@
-use strict;
-use warnings;
 use 5.020;
-use Test::Stream qw( -V1 -Tester );
+use Test2::V0;
 use Test::Spelling::Hunspell;
-
-plan 9;
 
 ok('Test::Spelling::Hunspell'->can('_is_perl'), '_is_perl exists');
 
@@ -19,3 +15,5 @@ foreach my $ext (qw( pl plx pm pod t ))
 
 is(is_perl("corpus/binisperl"),  T(), "corpus/binisperl is perl");
 is(is_perl("corpus/binnotperl"), F(), "corpus/binnotperl is perl");
+
+done_testing;

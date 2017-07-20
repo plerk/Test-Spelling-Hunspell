@@ -1,11 +1,7 @@
-use strict;
-use warnings;
-use Test::Stream qw( -V1 -Tester Subtest );
-use Test::Spelling::Hunspell;
 use 5.020;
+use Test2::V0;
+use Test::Spelling::Hunspell;
 use experimental qw( signatures postderef );
-
-plan 7;
 
 my $text = '';
 my %miss;
@@ -187,6 +183,8 @@ subtest 'repeated mispelling' => sub {
   is $lang[1], 'corpus/bar.dic', 'correct word list file';
 };
 
+done_testing;
+
 package
   Pod::Spell;
 
@@ -218,3 +216,4 @@ sub suggest ($self, $word)
 {
   $miss{$word}->@*;
 }
+
